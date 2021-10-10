@@ -1,0 +1,18 @@
+app:
+    hostname: "0.0.0.0"
+    port: 8000
+    project_name: "PermutationDict"
+    logger:
+        format: "<green>{time:HH:mm:ss}</green> | {level} | <level>{message}</level>"
+    api_router:
+        prefix: "/api/v1"
+mongodb:
+    url: "mongodb://root:pass@localhost:27017"
+    max_connections_count: 1000
+    min_connections_count: 50
+    server_selection_timeout_ms: 5000
+    db_name: 'dict'
+    terms:
+        collection_name: 'terms'
+    stats:
+        collection_name: 'stats'
