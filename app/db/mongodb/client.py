@@ -55,7 +55,7 @@ class MotorMongoDBClient(AsyncMongoDBBaseClient):
         return result.acknowledged
 
     async def try_insert_many(self, db_name: str, collection_name: str, docs: Sequence[dict]) -> bool:
-        result = await self._mongo_client[db_name][collection_name].try_insert_many(docs)
+        result = await self._mongo_client[db_name][collection_name].insert_many(docs)
         return result.acknowledged
 
     async def find(self, db_name: str, collection_name: str, doc: dict, length_limit=100) -> AsyncGenerator:

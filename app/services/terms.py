@@ -18,7 +18,7 @@ class TermsService:
 
     async def _try_insert_terms(self, dict_terms: Sequence[DictTermModel]):
         docs = [term.dict() for term in dict_terms]
-        await self.db_client.try_insert_many(self.db_name, self.db_collection_name, docs)
+        return await self.db_client.try_insert_many(self.db_name, self.db_collection_name, docs)
 
     # TODO: possible to stream the list
     async def find_similar_term(self, term: str, length_limit=100) -> List[str]:
