@@ -55,6 +55,7 @@ $ bash init.sh
 
 
 ### CLI Application
+
 To interact directly with the CLI, you can execute the following available commands:
 ```bash
 $ python run.py --help
@@ -73,3 +74,14 @@ Commands:
   process-data-from-file-to-db  Process and store the dictionary data...
   runserver                     Run the webserver(uvicorn) with the...
 ```
+
+### Tests
+
+To run the application tests(only CI tests are available), execute the following commands:
+```bash
+$ pip install -r requirements_dev.txt
+```
+```bash
+$ pytest tests
+```
+
