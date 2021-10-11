@@ -34,7 +34,7 @@ class LoguruLogger(LoggerBase):
 
     def __init__(self, config: Configuration):
         logger.remove()
-        logger_format = config["app"]["logger"]["format"]
+        logger_format = config["app"]["logger"]["format"].get()
         self._logger = self.logger_maker(sys.stdout, logger_format)
 
     @staticmethod

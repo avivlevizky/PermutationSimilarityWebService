@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, Optional
 
 from pydantic import BaseModel
 
@@ -10,4 +10,4 @@ class SimilarResponse(BaseModel):
 class StatsResponse(BaseModel):
     totalWords: int
     totalRequests: int
-    avgProcessingTimeNs: float
+    avgProcessingTimeNs: Optional[float]

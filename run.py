@@ -11,7 +11,7 @@ from app.core.asyncio import EventLoopBase
 from app.core.containers import container
 from app.core.errors_handling import async_func_error_handler
 from app.db.mongodb.client import AsyncMongoDBBaseClient
-from app.db.mongodb.util import AsyncMongoDBUtil
+from app.db.mongodb.util import AsyncMongoDBUtils
 from app.main import fastapi_app
 from app.services.terms import TermsService
 
@@ -21,10 +21,11 @@ CLI_APP = typer.Typer()
 @async_func_error_handler
 @CLI_APP.command()
 def create_db_collections():
-    typer.echo("Creating db collections")
+    db_name = container[Configuration]['mongodb']['db_name'].get()
+    typer.echo(f"Creating mongodb collections in {db_name} database")
     event_loop = container[EventLoopBase]
     with click_spinner.spinner():
-        event_loop.run(container[AsyncMongoDBUtil].create_indexes())
+        event_loop.run(container[AsyncMongoDBUtils].create_indexes(db_name))
 
 
 @async_func_error_handler

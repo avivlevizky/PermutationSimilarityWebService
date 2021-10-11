@@ -22,15 +22,21 @@ class AsyncMongoDBBaseClient(ABC):
         ...
 
     @abstractmethod
-    async def create_index(self, db_name: str, collection_name: str, field: str, unique: bool = False) -> str:
-        ...
-
-    @abstractmethod
     async def aggregate(self, db_name: str, collection_name: str, pipeline: List[dict[Any, Any]]) -> dict:
         ...
 
     @abstractmethod
     def close(self) -> NoReturn:
+        ...
+
+
+class AsyncMongoDBBaseUtilClient(ABC):
+    @abstractmethod
+    async def create_index(self, db_name: str, collection_name: str, field: str, unique: bool = False) -> str:
+        ...
+
+    @abstractmethod
+    async def drop_db(self, db_name: str) -> NoReturn:
         ...
 
 
@@ -40,10 +46,10 @@ class MotorMongoDBClient(AsyncMongoDBBaseClient):
                  config: Configuration,
                  event_loop: EventLoopBase):
         self._logger = logger
-        db_url = config['mongodb']['url']
-        max_connections_count = config['mongodb']['max_connections_count']
-        min_connections_count = config['mongodb']['min_connections_count']
-        server_selection_timeout_ms = config['mongodb']['server_selection_timeout_ms']
+        db_url = config['mongodb']['url'].get()
+        max_connections_count = config['mongodb']['max_connections_count'].get()
+        min_connections_count = config['mongodb']['min_connections_count'].get()
+        server_selection_timeout_ms = config['mongodb']['server_selection_timeout_ms'].get()
         self._mongo_client = motor.motor_asyncio.AsyncIOMotorClient(db_url,
                                                                     serverSelectionTimeoutMS=server_selection_timeout_ms,
                                                                     maxPoolSize=max_connections_count,
@@ -63,11 +69,31 @@ class MotorMongoDBClient(AsyncMongoDBBaseClient):
         for document in await cursor.to_list(length=length_limit):
             yield document
 
-    async def create_index(self, db_name: str, collection_name: str, field: str, unique: bool = False) -> str:
-        return await self._mongo_client[db_name][collection_name].create_index(field, unique=unique)
-
     async def aggregate(self, db_name: str, collection_name: str, pipeline: dict) -> dict:
         return await self._mongo_client[db_name][collection_name].aggregate(pipeline).to_list(1)
 
     def close(self) -> NoReturn:
         self._mongo_client.close()
+
+
+class MotorMongoDBUtilClient(AsyncMongoDBBaseUtilClient):
+    def __init__(self,
+                 logger: LoggerBase,
+                 config: Configuration,
+                 event_loop: EventLoopBase):
+        self._logger = logger
+        db_url = config['mongodb']['url'].get()
+        max_connections_count = config['mongodb']['max_connections_count'].get()
+        min_connections_count = config['mongodb']['min_connections_count'].get()
+        server_selection_timeout_ms = config['mongodb']['server_selection_timeout_ms'].get()
+        self._mongo_client = motor.motor_asyncio.AsyncIOMotorClient(db_url,
+                                                                    serverSelectionTimeoutMS=server_selection_timeout_ms,
+                                                                    maxPoolSize=max_connections_count,
+                                                                    minPoolSize=min_connections_count,
+                                                                    io_loop=event_loop.get_loop())
+
+    async def create_index(self, db_name: str, collection_name: str, field: str, unique: bool = False) -> str:
+        return await self._mongo_client[db_name][collection_name].create_index(field, unique=unique)
+
+    async def drop_db(self, db_name: str) -> NoReturn:
+        return await self._mongo_client.drop_database(db_name)

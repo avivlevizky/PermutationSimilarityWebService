@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class DictTermModel(BaseModel):
@@ -11,6 +12,6 @@ class DictRequestStatsModel(BaseModel):
     request_path: str = Field(str)
 
 
-class RequestStatsResultModel(BaseModel):
+class RequestsStatsResultModel(BaseModel):
     total_requests: int = Field(int)
-    avg_processing_time_ns: int = Field(int)
+    avg_processing_time_ns: Optional[float] = Field(float)

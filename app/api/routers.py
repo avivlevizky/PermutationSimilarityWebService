@@ -10,19 +10,15 @@ from app.services.terms import TermsService
 
 
 app_router = APIRouter(
-    prefix=container[Configuration]["app"]["api_router"]["prefix"],
+    prefix=container[Configuration]["app"]["api_router"]["prefix"].get(),
 )
-
-
-terms_service: TermsService = container[TermsService]
-stats_service: StatsService = container[StatsService]
 
 
 @app_router.get("/similar", response_model=SimilarResponse)
 @async_request_error_handler
-@monitor_request_duration(stats_service)
+@monitor_request_duration
 async def similar(word: str, request: Request):
-    terms_results = await terms_service.find_similar_term(word)
+    terms_results = await container[TermsService].find_similar_term(word)
     return SimilarResponse(similar=terms_results)
 
 
@@ -30,8 +26,8 @@ async def similar(word: str, request: Request):
 @async_request_error_handler
 @async_request_error_handler
 async def stats(request: Request):
-    total_words = await terms_service.count_all_terms()
-    terms_requests_stats = await stats_service.get_terms_requests_stats()
+    total_words = await container[TermsService].count_all_terms()
+    terms_requests_stats = await container[StatsService].get_terms_requests_stats()
     total_requests, avg_processing_time_ns = terms_requests_stats.total_requests, terms_requests_stats.avg_processing_time_ns
     return StatsResponse(totalWords=total_words,
                          totalRequests=total_requests,

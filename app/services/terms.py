@@ -12,27 +12,30 @@ from app.models.services import DictTermModel
 class TermsService:
     def __init__(self, logger: LoggerBase, db_client: AsyncMongoDBBaseClient, config: Configuration):
         self.logger = logger
-        self.db_name = config["mongodb"]["db_name"]
-        self.db_collection_name = config["mongodb"]["terms"]["collection_name"]
-        self.db_client = db_client
+        self._db_name = config["mongodb"]["db_name"].get()
+        self._db_collection_name = config["mongodb"]["terms"]["collection_name"].get()
+        self._db_client = db_client
 
     async def _try_insert_terms(self, dict_terms: Sequence[DictTermModel]):
         docs = [term.dict() for term in dict_terms]
-        return await self.db_client.try_insert_many(self.db_name, self.db_collection_name, docs)
+        return await self._db_client.try_insert_many(self._db_name, self._db_collection_name, docs)
 
     # TODO: possible to stream the list
     async def find_similar_term(self, term: str, length_limit=100) -> List[str]:
         sorted_term = "".join(sorted(term))
         query = {'permutation_similarity_index': sorted_term}
         return [doc['term']
-                async for doc in self.db_client.find(self.db_name, self.db_collection_name, query, length_limit)]
+                async for doc in self._db_client.find(self._db_name, self._db_collection_name, query, length_limit)]
 
     async def count_all_terms(self) -> int:
         pipeline_terms = [
             {'$group': {'_id': 0, 'count': {'$sum': 1}}},
         ]
-        results_terms = await self.db_client.aggregate(self.db_name, self.db_collection_name, pipeline_terms)
-        return results_terms[0]['count']
+        results_terms = await self._db_client.aggregate(self._db_name, self._db_collection_name, pipeline_terms)
+        if results_terms:
+            return results_terms[0]['count']
+        else:
+            return 0
 
     async def process_data_from_path_by_chunk(self, data_path: Path, chunk_size: int = 5000) -> int:
         total_terms_inserted = 0

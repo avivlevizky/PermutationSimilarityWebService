@@ -1,0 +1,4 @@
+mongodb:
+    db_name: 'tests_dict'
+data:
+    file_path: 'tests/tests_words.txt'
