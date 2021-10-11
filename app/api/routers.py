@@ -1,5 +1,6 @@
 from confuse import Configuration
 from fastapi import APIRouter, Request
+from fastapi.responses import RedirectResponse
 
 from app.core.errors_handling import async_request_error_handler
 from app.models.responses import SimilarResponse, StatsResponse
@@ -9,13 +10,23 @@ from app.services.analytics import AnalyticsService
 from app.services.words import WordsService
 
 
-app_router = APIRouter(
+default_router = APIRouter()
+
+dict_router = APIRouter(
     prefix=container[Configuration]["app"]["api_router"]["prefix"].get(),
 )
 
 
+@default_router.get("/")
+def root():
+    """
+       Controller handler for redirect root path to docs endpoint
+    """
+    return RedirectResponse(url='/docs')
+
+
 # TODO: can be cacheable(LRU)
-@app_router.get("/similar", response_model=SimilarResponse)
+@dict_router.get("/similar", response_model=SimilarResponse)
 @async_request_error_handler
 @monitor_request_duration
 async def similar(word: str, request: Request) -> SimilarResponse:
@@ -30,7 +41,7 @@ async def similar(word: str, request: Request) -> SimilarResponse:
     return SimilarResponse(similar=words_results)
 
 
-@app_router.get("/stats", response_model=StatsResponse)
+@dict_router.get("/stats", response_model=StatsResponse)
 @async_request_error_handler
 @async_request_error_handler
 async def stats(request: Request) -> StatsResponse:

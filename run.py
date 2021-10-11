@@ -23,7 +23,7 @@ CLI_APP = typer.Typer()
 @CLI_APP.command()
 def create_db_collections():
     """
-    CLI command for creating and indexing the necessary databases collections
+    Create and indexes the necessary databases's collections
     """
     db_name = container[Configuration]['mongodb']['db_name'].get()
     typer.echo(f"Creating mongodb collections in {db_name} database")
@@ -36,7 +36,7 @@ def create_db_collections():
 @CLI_APP.command()
 def process_data_from_file_to_db(file_path: str):
     """
-    CLI command for process and store the dictionary data from file
+    Process and store the dictionary data from file
     :param file_path: The dictionary data file
     """
     typer.echo(f"Starting to process data from file: {file_path}")
@@ -51,7 +51,7 @@ def process_data_from_file_to_db(file_path: str):
 @CLI_APP.command()
 def runserver():
     """
-    CLI command for running the webserver(uvicorn) and the webservice application(FastAPI)
+    Run the webserver(uvicorn) with the webservice application(FastAPI)
     """
     typer.echo("Starting server...")
 

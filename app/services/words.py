@@ -1,4 +1,4 @@
-from typing import Sequence, List, NoReturn
+from typing import List, NoReturn
 
 from confuse import Configuration
 from fastapi import Path
@@ -58,7 +58,7 @@ class WordsService:
         else:
             return 0
 
-    async def process_data_from_path_by_chunk(self, data_path: Path, chunk_size: int = 5000) -> int:
+    async def process_data_from_path_by_chunk(self, data_path: Path, chunk_size: int = 10000) -> int:
         """
         Process the dictionary words from the given file path (data_path) and stores it by bulks into the database
         in bulks
@@ -71,15 +71,17 @@ class WordsService:
             processed_words = []
             total_words_inserted = 0
             for line in file_handler:
-                processed_words.clear()
-                for _ in range(chunk_size):
-                    # Each word is sorted lexicographical and use it as the permutation similarity index
-                    word = line.strip()
-                    sorted_word = "".join(sorted(word))
-                    processed_words.append(DictWordModel(word=word, permutation_similarity_index=sorted_word))
-                    if len(processed_words) == chunk_size:
-                        await self._insert_words(processed_words)
-                        total_words_inserted += len(processed_words)
+                # Each word is sorted lexicographical and use it as the permutation similarity index
+                word = line.strip()
+                if not word:
+                    # if word is empty -> end of file
+                    break
+                sorted_word = "".join(sorted(word))
+                processed_words.append(DictWordModel(word=word, permutation_similarity_index=sorted_word))
+                if (num_processed_words := len(processed_words)) == chunk_size:
+                    await self._insert_words(processed_words)
+                    processed_words.clear()
+                    total_words_inserted += num_processed_words
             if processed_words:
                 await self._insert_words(processed_words)
                 total_words_inserted += len(processed_words)
