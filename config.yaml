@@ -12,7 +12,7 @@ mongodb:
     min_connections_count: 50
     server_selection_timeout_ms: 5000
     db_name: 'dict'
-    terms:
-        collection_name: 'terms'
+    words:
+        collection_name: 'words'
     stats:
         collection_name: 'stats'

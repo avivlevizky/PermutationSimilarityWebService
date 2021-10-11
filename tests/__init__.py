@@ -5,8 +5,8 @@ from app.core.asyncio import EventLoopBase
 from app.db.mongodb.util import AsyncMongoDBUtils
 from app.db.mongodb.client import AsyncMongoDBBaseUtilClient
 from app.core.logger import LoggerBase
-from app.services.terms import TermsService
-from app.services.stats import StatsService
+from app.services.words import WordsService
+from app.services.analytics import AnalyticsService
 
 
 async def init():
@@ -19,8 +19,8 @@ async def init():
     await container[AsyncMongoDBUtils].create_indexes(tests_db_name)
 
     logger.info("Monkey patching the services with the tests database")
-    container[TermsService]._db_name = tests_db_name
-    container[StatsService]._db_name = tests_db_name
+    container[WordsService]._db_name = tests_db_name
+    container[AnalyticsService]._db_name = tests_db_name
 
 
 async def cleanup():

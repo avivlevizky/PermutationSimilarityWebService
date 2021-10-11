@@ -2,8 +2,8 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 
-class DictTermModel(BaseModel):
-    term: str = Field(str)
+class DictWordModel(BaseModel):
+    word: str = Field(str)
     permutation_similarity_index: str = Field(str)
 
 

@@ -12,6 +12,10 @@ from app.models.exceptions import InternalServerError
 
 
 def get_app() -> FastAPI:
+    """
+    Initialize the FastAPI application with all relevant settings
+    :return: FastAPI application
+    """
     project_name = container[Configuration]['app']['project_name'].get()
     app = FastAPI(title=project_name)
     app.add_middleware(

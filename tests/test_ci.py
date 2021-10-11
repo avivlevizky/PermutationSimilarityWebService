@@ -2,11 +2,12 @@ from confuse import Configuration
 from pathlib import Path
 
 import pytest
+
 from fastapi.testclient import TestClient
 from app.core.containers import container
 
 from app.main import fastapi_app
-from app.services.terms import TermsService
+from app.services.words import WordsService
 from app.core.asyncio import EventLoopBase
 
 
@@ -17,7 +18,7 @@ PREFIX_ENDPOINT = container[Configuration]["app"]["api_router"]["prefix"].get()
 @pytest.fixture
 def add_mock_data():
     data_file_path = container[Configuration]['data']['file_path'].get()
-    process_data_coroutine = container[TermsService].process_data_from_path_by_chunk(Path(data_file_path))
+    process_data_coroutine = container[WordsService].process_data_from_path_by_chunk(Path(data_file_path))
     container[EventLoopBase].run(process_data_coroutine)
 
 
