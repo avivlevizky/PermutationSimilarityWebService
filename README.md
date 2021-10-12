@@ -38,7 +38,7 @@ to create more analytical insights)
 
 ## Requirements
 
-- Python 3.10
+- (Python 3.10)[https://www.python.org/downloads/release/python-3100/]
 - Docker 4.0+
 
 ## Usage
