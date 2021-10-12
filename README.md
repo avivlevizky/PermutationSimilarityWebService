@@ -38,12 +38,19 @@ to create more analytical insights)
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.10
 - Docker 4.0+
 
 ## Usage
 
 The application suggest an **CLI interface** for interact on the available various functionalities
+
+### Config
+
+For using custom config dir, set the path with the XDG_CONFIG_HOME environment variable
+```bash
+$ bash export XDG_CONFIG_HOME={CONFIG_PATH}
+```
 
 ### First Time Server Start Up
 
