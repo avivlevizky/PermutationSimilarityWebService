@@ -52,14 +52,19 @@ For using custom config dir, set the path with the XDG_CONFIG_HOME environment v
 $ bash export XDG_CONFIG_HOME={CONFIG_PATH}
 ```
 
-### First Time Server Start Up
+### Init
 
-Run the following bash script for install all the Python requirements, initialized and start up the web server:
+Run the following bash script for install all the Python requirements and to initilize the database (indexing and storing the dictinary data):
 ```bash
 $ bash init.sh
 ```
-***After execute the init.sh, It's crucial to run the server or interact with the other available commands through the CLI***
 
+### Run Server
+
+To run the web service application, execute the following command:
+```bash
+$ python run.py runserver
+```
 
 ### CLI Application
 
